@@ -1,0 +1,296 @@
+{
+  "scenario": "S09",
+  "title": "Missing ticket details",
+  "part": 2,
+  "status_profile": "normal",
+  "command": "python -m helpdesk.scenarios S09",
+  "model": {
+    "name": "gpt-5.6-luna",
+    "provider": "api.openai.com"
+  },
+  "started_at": "2026-11-09T22:47:41",
+  "reset_before": {
+    "removed_memory_files": [
+      "local-storage/checkpoints.sqlite",
+      "local-storage/user_memory.sqlite"
+    ],
+    "removed_old_ticket_drafts": []
+  },
+  "segments": [
+    {
+      "process_id": 16400,
+      "after_restart": false,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s09",
+          "message": "Prepare a support ticket.",
+          "nodes_visited": [
+            "load_user_memory",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_user_memory",
+              "update": {
+                "user_preference": null,
+                "tool_rounds": 0,
+                "loop_limit_reached": false
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "What problem are you having, and what have you already tried?"
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "__end__"
+            }
+          ],
+          "model_tool_requests": [],
+          "tool_results": [],
+          "memory_read": {
+            "conversation_messages_before_turn": 0,
+            "user_memory": null
+          },
+          "sources": [],
+          "final_reply": "What problem are you having, and what have you already tried?",
+          "ticket_file": null,
+          "tool_rounds": 0,
+          "loop_limit_reached": false
+        },
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s09",
+          "message": "The issue is Wi-Fi. I enabled it and tried reconnecting, but it still fails.",
+          "nodes_visited": [
+            "load_user_memory",
+            "agent",
+            "tools",
+            "agent",
+            "tools",
+            "agent",
+            "tools",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_user_memory",
+              "update": {
+                "user_preference": null,
+                "tool_rounds": 0,
+                "loop_limit_reached": false
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "find_instructions",
+                        "args": {
+                          "topic": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"instruction_id\": \"GUIDE-WIFI\", \"title\": \"Connect to the practice campus network\", \"steps\": [\"Check that Wi-Fi is enabled and airplane mode is off.\", \"Select the fictional Campus-Demo network.\", \"If connection fails, forget the saved network and try connecting again.\", \"If the problem remains, check the service status before preparing a ticket.\"], \"source\": \"data/helpdesk.json\"}",
+                    "name": "find_instructions",
+                    "tool_call_id": "call_HTuAapXOkewSYsWkXpcgMaqs"
+                  }
+                ],
+                "tool_rounds": 1
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "check_service_status",
+                        "args": {
+                          "service": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"service\": \"wifi\", \"status\": \"operational\", \"message\": \"The demo Wi-Fi service has no reported outage.\", \"status_profile\": \"normal\", \"source\": \"data/service_status.json\"}",
+                    "name": "check_service_status",
+                    "tool_call_id": "call_bX7uZ7JsKn80EAZGcxXdwcWQ"
+                  }
+                ],
+                "tool_rounds": 2
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "prepare_ticket",
+                        "args": {
+                          "category": "wifi",
+                          "summary": "Wi-Fi issue: Wi-Fi was enabled, but reconnecting still fails.",
+                          "steps_tried": [
+                            "Enabled Wi-Fi",
+                            "Tried reconnecting"
+                          ],
+                          "service_status": "operational"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"ticket_id\": \"TKT-20261109-224753-ddb5\", \"file\": \"outputs/tickets/TKT-20261109-224753-ddb5.json\", \"sent\": false}",
+                    "name": "prepare_ticket",
+                    "tool_call_id": "call_ZEqQ9tFHkeETm1IEqQEJGYIS"
+                  }
+                ],
+                "tool_rounds": 3
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "Ticket prepared because the Wi-Fi service is operational.\n\n- **Ticket ID:** TKT-20261109-224753-ddb5\n- **File:** `outputs/tickets/TKT-20261109-224753-ddb5.json`\n\nNothing was sent."
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "__end__"
+            }
+          ],
+          "model_tool_requests": [
+            {
+              "round": 1,
+              "name": "find_instructions",
+              "args": {
+                "topic": "wifi"
+              }
+            },
+            {
+              "round": 2,
+              "name": "check_service_status",
+              "args": {
+                "service": "wifi"
+              }
+            },
+            {
+              "round": 3,
+              "name": "prepare_ticket",
+              "args": {
+                "category": "wifi",
+                "summary": "Wi-Fi issue: Wi-Fi was enabled, but reconnecting still fails.",
+                "steps_tried": [
+                  "Enabled Wi-Fi",
+                  "Tried reconnecting"
+                ],
+                "service_status": "operational"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "name": "find_instructions",
+              "result": {
+                "instruction_id": "GUIDE-WIFI",
+                "title": "Connect to the practice campus network",
+                "steps": [
+                  "Check that Wi-Fi is enabled and airplane mode is off.",
+                  "Select the fictional Campus-Demo network.",
+                  "If connection fails, forget the saved network and try connecting again.",
+                  "If the problem remains, check the service status before preparing a ticket."
+                ],
+                "source": "data/helpdesk.json"
+              }
+            },
+            {
+              "name": "check_service_status",
+              "result": {
+                "service": "wifi",
+                "status": "operational",
+                "message": "The demo Wi-Fi service has no reported outage.",
+                "status_profile": "normal",
+                "source": "data/service_status.json"
+              }
+            },
+            {
+              "name": "prepare_ticket",
+              "result": {
+                "ticket_id": "TKT-20261109-224753-ddb5",
+                "file": "outputs/tickets/TKT-20261109-224753-ddb5.json",
+                "sent": false
+              }
+            }
+          ],
+          "memory_read": {
+            "conversation_messages_before_turn": 2,
+            "user_memory": null
+          },
+          "sources": [
+            "conversation memory",
+            "reference file: data/helpdesk.json",
+            "status snapshot: normal"
+          ],
+          "final_reply": "Ticket prepared because the Wi-Fi service is operational.\n\n- **Ticket ID:** TKT-20261109-224753-ddb5\n- **File:** `outputs/tickets/TKT-20261109-224753-ddb5.json`\n\nNothing was sent.",
+          "ticket_file": "outputs/tickets/TKT-20261109-224753-ddb5.json",
+          "tool_rounds": 3,
+          "loop_limit_reached": false
+        }
+      ]
+    }
+  ],
+  "parent_process_id": 6856
+}

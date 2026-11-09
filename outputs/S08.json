@@ -1,0 +1,163 @@
+{
+  "scenario": "S08",
+  "title": "Status source unavailable",
+  "part": 2,
+  "status_profile": "status_unavailable",
+  "command": "python -m helpdesk.scenarios S08",
+  "model": {
+    "name": "gpt-5.6-luna",
+    "provider": "api.openai.com"
+  },
+  "started_at": "2026-11-09T22:47:31",
+  "reset_before": {
+    "removed_memory_files": [
+      "local-storage/checkpoints.sqlite",
+      "local-storage/user_memory.sqlite"
+    ],
+    "removed_old_ticket_drafts": []
+  },
+  "segments": [
+    {
+      "process_id": 17228,
+      "after_restart": false,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s08",
+          "message": "Check whether Wi-Fi is down. If it is operating, prepare a ticket. I already enabled Wi-Fi and reconnected, with no success.",
+          "nodes_visited": [
+            "load_user_memory",
+            "agent",
+            "tools",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_user_memory",
+              "update": {
+                "user_preference": null,
+                "tool_rounds": 0,
+                "loop_limit_reached": false
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "check_service_status",
+                        "args": {
+                          "service": "wifi"
+                        }
+                      },
+                      {
+                        "name": "find_instructions",
+                        "args": {
+                          "topic": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"service\": \"wifi\", \"status\": \"unknown\", \"message\": \"The demo Wi-Fi status source is unavailable.\", \"status_profile\": \"status_unavailable\", \"source\": \"data/service_status.json\"}",
+                    "name": "check_service_status",
+                    "tool_call_id": "call_OI7LphzqvFZ6Zz6KbrUiLJOD"
+                  },
+                  {
+                    "type": "tool",
+                    "content": "{\"instruction_id\": \"GUIDE-WIFI\", \"title\": \"Connect to the practice campus network\", \"steps\": [\"Check that Wi-Fi is enabled and airplane mode is off.\", \"Select the fictional Campus-Demo network.\", \"If connection fails, forget the saved network and try connecting again.\", \"If the problem remains, check the service status before preparing a ticket.\"], \"source\": \"data/helpdesk.json\"}",
+                    "name": "find_instructions",
+                    "tool_call_id": "call_ydy4Qz1mYNrh1lRbJUz9k8Jl"
+                  }
+                ],
+                "tool_rounds": 1
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "Wi-Fi status could not be determined because the status source is unavailable, so I did not prepare a ticket. Would you like a ticket draft noting that the status could not be checked?"
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "__end__"
+            }
+          ],
+          "model_tool_requests": [
+            {
+              "round": 1,
+              "name": "check_service_status",
+              "args": {
+                "service": "wifi"
+              }
+            },
+            {
+              "round": 1,
+              "name": "find_instructions",
+              "args": {
+                "topic": "wifi"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "name": "check_service_status",
+              "result": {
+                "service": "wifi",
+                "status": "unknown",
+                "message": "The demo Wi-Fi status source is unavailable.",
+                "status_profile": "status_unavailable",
+                "source": "data/service_status.json"
+              }
+            },
+            {
+              "name": "find_instructions",
+              "result": {
+                "instruction_id": "GUIDE-WIFI",
+                "title": "Connect to the practice campus network",
+                "steps": [
+                  "Check that Wi-Fi is enabled and airplane mode is off.",
+                  "Select the fictional Campus-Demo network.",
+                  "If connection fails, forget the saved network and try connecting again.",
+                  "If the problem remains, check the service status before preparing a ticket."
+                ],
+                "source": "data/helpdesk.json"
+              }
+            }
+          ],
+          "memory_read": {
+            "conversation_messages_before_turn": 0,
+            "user_memory": null
+          },
+          "sources": [
+            "reference file: data/helpdesk.json",
+            "status snapshot: status_unavailable"
+          ],
+          "final_reply": "Wi-Fi status could not be determined because the status source is unavailable, so I did not prepare a ticket. Would you like a ticket draft noting that the status could not be checked?",
+          "ticket_file": null,
+          "tool_rounds": 1,
+          "loop_limit_reached": false
+        }
+      ]
+    }
+  ],
+  "parent_process_id": 6856
+}

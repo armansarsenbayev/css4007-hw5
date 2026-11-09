@@ -1,0 +1,228 @@
+{
+  "scenario": "S13",
+  "title": "Do not share memory between users",
+  "part": 3,
+  "status_profile": "normal",
+  "command": "python -m helpdesk.scenarios S13",
+  "model": {
+    "name": "gpt-5.6-luna",
+    "provider": "api.openai.com"
+  },
+  "started_at": "2026-11-09T22:49:07",
+  "reset_before": {
+    "removed_memory_files": [
+      "local-storage/checkpoints.sqlite",
+      "local-storage/user_memory.sqlite"
+    ],
+    "removed_old_ticket_drafts": []
+  },
+  "segments": [
+    {
+      "process_id": 15500,
+      "after_restart": false,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "isolation-a",
+          "message": "Please remember that I prefer replies in Kazakh. I have a Wi-Fi problem.",
+          "nodes_visited": [
+            "load_user_memory",
+            "agent",
+            "tools",
+            "agent",
+            "tools",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_user_memory",
+              "update": {
+                "user_preference": null,
+                "tool_rounds": 0,
+                "loop_limit_reached": false
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "save_user_preference",
+                        "args": {
+                          "language": "Kazakh"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"saved\": true, \"language\": \"Kazakh\", \"scope\": \"this user, all conversations\"}",
+                    "name": "save_user_preference",
+                    "tool_call_id": "call_3Gj342hQfIoxmx0HdxEoqS7Z"
+                  }
+                ],
+                "tool_rounds": 1
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "find_instructions",
+                        "args": {
+                          "topic": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"instruction_id\": \"GUIDE-WIFI\", \"title\": \"Connect to the practice campus network\", \"steps\": [\"Check that Wi-Fi is enabled and airplane mode is off.\", \"Select the fictional Campus-Demo network.\", \"If connection fails, forget the saved network and try connecting again.\", \"If the problem remains, check the service status before preparing a ticket.\"], \"source\": \"data/helpdesk.json\"}",
+                    "name": "find_instructions",
+                    "tool_call_id": "call_AfoNSaDVGi3iRPQdPF6LZPzI"
+                  }
+                ],
+                "tool_rounds": 2
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "Wi‑Fi бойынша көмектесемін. Мына қадамдарды орындап көріңіз:\n\n1. Wi‑Fi қосулы, ал ұшақ режимі өшірулі екенін тексеріңіз.\n2. **Campus-Demo** желісін таңдаңыз.\n3. Қосылмаса, сақталған желіні ұмытып, қайта қосылып көріңіз.\n4. Мәселе шешілмесе, қызмет күйін тексеріңіз.\n\nҚай қадамға дейін орындадыңыз және нақты қандай мәселе болып тұр?"
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "__end__"
+            }
+          ],
+          "model_tool_requests": [
+            {
+              "round": 1,
+              "name": "save_user_preference",
+              "args": {
+                "language": "Kazakh"
+              }
+            },
+            {
+              "round": 2,
+              "name": "find_instructions",
+              "args": {
+                "topic": "wifi"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "name": "save_user_preference",
+              "result": {
+                "saved": true,
+                "language": "Kazakh",
+                "scope": "this user, all conversations"
+              }
+            },
+            {
+              "name": "find_instructions",
+              "result": {
+                "instruction_id": "GUIDE-WIFI",
+                "title": "Connect to the practice campus network",
+                "steps": [
+                  "Check that Wi-Fi is enabled and airplane mode is off.",
+                  "Select the fictional Campus-Demo network.",
+                  "If connection fails, forget the saved network and try connecting again.",
+                  "If the problem remains, check the service status before preparing a ticket."
+                ],
+                "source": "data/helpdesk.json"
+              }
+            }
+          ],
+          "memory_read": {
+            "conversation_messages_before_turn": 0,
+            "user_memory": null
+          },
+          "sources": [
+            "reference file: data/helpdesk.json"
+          ],
+          "final_reply": "Wi‑Fi бойынша көмектесемін. Мына қадамдарды орындап көріңіз:\n\n1. Wi‑Fi қосулы, ал ұшақ режимі өшірулі екенін тексеріңіз.\n2. **Campus-Demo** желісін таңдаңыз.\n3. Қосылмаса, сақталған желіні ұмытып, қайта қосылып көріңіз.\n4. Мәселе шешілмесе, қызмет күйін тексеріңіз.\n\nҚай қадамға дейін орындадыңыз және нақты қандай мәселе болып тұр?",
+          "ticket_file": null,
+          "tool_rounds": 2,
+          "loop_limit_reached": false
+        },
+        {
+          "user_id": "demo-user-b",
+          "thread_id": "isolation-b",
+          "message": "Have I told you a preferred language or a previous problem?",
+          "nodes_visited": [
+            "load_user_memory",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_user_memory",
+              "update": {
+                "user_preference": null,
+                "tool_rounds": 0,
+                "loop_limit_reached": false
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "No. No preferred language or previous problem has been recorded in this conversation."
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "__end__"
+            }
+          ],
+          "model_tool_requests": [],
+          "tool_results": [],
+          "memory_read": {
+            "conversation_messages_before_turn": 0,
+            "user_memory": null
+          },
+          "sources": [],
+          "final_reply": "No. No preferred language or previous problem has been recorded in this conversation.",
+          "ticket_file": null,
+          "tool_rounds": 0,
+          "loop_limit_reached": false
+        }
+      ]
+    }
+  ],
+  "parent_process_id": 6856
+}

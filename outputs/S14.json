@@ -1,0 +1,129 @@
+{
+  "scenario": "S14",
+  "title": "Password recovery outage",
+  "part": 2,
+  "status_profile": "recovery_outage",
+  "command": "python -m helpdesk.scenarios S14",
+  "model": {
+    "name": "gpt-5.6-luna",
+    "provider": "api.openai.com"
+  },
+  "started_at": "2026-11-09T22:49:21",
+  "reset_before": {
+    "removed_memory_files": [
+      "local-storage/checkpoints.sqlite",
+      "local-storage/user_memory.sqlite"
+    ],
+    "removed_old_ticket_drafts": []
+  },
+  "segments": [
+    {
+      "process_id": 16428,
+      "after_restart": false,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s14",
+          "message": "My password recovery page is unavailable. Check the service status. Is there a known problem?",
+          "nodes_visited": [
+            "load_user_memory",
+            "agent",
+            "tools",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_user_memory",
+              "update": {
+                "user_preference": null,
+                "tool_rounds": 0,
+                "loop_limit_reached": false
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "check_service_status",
+                        "args": {
+                          "service": "account_recovery"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"service\": \"account_recovery\", \"status\": \"outage\", \"message\": \"The demo account-recovery service is unavailable. The fixture gives no repair time.\", \"status_profile\": \"recovery_outage\", \"source\": \"data/service_status.json\"}",
+                    "name": "check_service_status",
+                    "tool_call_id": "call_QXuuyFoaIgAVnKlPG2xG731j"
+                  }
+                ],
+                "tool_rounds": 1
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "Yes. The account-recovery service is currently experiencing an outage, so the password recovery page is unavailable. No repair time is available."
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "__end__"
+            }
+          ],
+          "model_tool_requests": [
+            {
+              "round": 1,
+              "name": "check_service_status",
+              "args": {
+                "service": "account_recovery"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "name": "check_service_status",
+              "result": {
+                "service": "account_recovery",
+                "status": "outage",
+                "message": "The demo account-recovery service is unavailable. The fixture gives no repair time.",
+                "status_profile": "recovery_outage",
+                "source": "data/service_status.json"
+              }
+            }
+          ],
+          "memory_read": {
+            "conversation_messages_before_turn": 0,
+            "user_memory": null
+          },
+          "sources": [
+            "status snapshot: recovery_outage"
+          ],
+          "final_reply": "Yes. The account-recovery service is currently experiencing an outage, so the password recovery page is unavailable. No repair time is available.",
+          "ticket_file": null,
+          "tool_rounds": 1,
+          "loop_limit_reached": false
+        }
+      ]
+    }
+  ],
+  "parent_process_id": 6856
+}

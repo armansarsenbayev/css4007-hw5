@@ -1,0 +1,60 @@
+{
+  "scenario": "S03",
+  "title": "Unsupported request",
+  "part": 1,
+  "status_profile": "normal",
+  "graph_variant": "original",
+  "command": "python -m helpdesk.scenarios S03",
+  "started_at": "2026-11-09T22:46:53",
+  "reset_before": {
+    "removed_memory_files": [],
+    "removed_old_ticket_drafts": []
+  },
+  "segments": [
+    {
+      "process_id": 16580,
+      "after_restart": false,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s03",
+          "message": "My laptop screen is broken.",
+          "initial_state": {
+            "message": "My laptop screen is broken."
+          },
+          "nodes_visited": [
+            "read_request",
+            "other_help"
+          ],
+          "steps": [
+            {
+              "node": "read_request",
+              "update": {
+                "category": "other"
+              },
+              "state_after": {
+                "message": "My laptop screen is broken.",
+                "category": "other"
+              },
+              "next_node_chosen_by_edge": "other_help"
+            },
+            {
+              "node": "other_help",
+              "update": {
+                "reply": "Does your problem concern Wi-Fi or a password? This practice helpdesk covers: Wi-Fi troubleshooting; Password recovery guidance; Service status lookup; Preparing local ticket drafts."
+              },
+              "state_after": {
+                "message": "My laptop screen is broken.",
+                "category": "other",
+                "reply": "Does your problem concern Wi-Fi or a password? This practice helpdesk covers: Wi-Fi troubleshooting; Password recovery guidance; Service status lookup; Preparing local ticket drafts."
+              },
+              "next_node_chosen_by_edge": "END"
+            }
+          ],
+          "final_reply": "Does your problem concern Wi-Fi or a password? This practice helpdesk covers: Wi-Fi troubleshooting; Password recovery guidance; Service status lookup; Preparing local ticket drafts."
+        }
+      ]
+    }
+  ],
+  "parent_process_id": 6856
+}

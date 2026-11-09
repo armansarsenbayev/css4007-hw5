@@ -1,0 +1,272 @@
+{
+  "scenario": "S11",
+  "title": "Persist and recall after restart",
+  "part": 3,
+  "status_profile": "normal",
+  "command": "python -m helpdesk.scenarios S11",
+  "model": {
+    "name": "gpt-5.6-luna",
+    "provider": "api.openai.com"
+  },
+  "started_at": "2026-11-09T22:48:08",
+  "reset_before": {
+    "removed_memory_files": [
+      "local-storage/checkpoints.sqlite",
+      "local-storage/user_memory.sqlite"
+    ],
+    "removed_old_ticket_drafts": []
+  },
+  "segments": [
+    {
+      "process_id": 10208,
+      "after_restart": false,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "restart-a",
+          "message": "Please remember that I prefer replies in Kazakh. My issue is Wi-Fi. I enabled it and tried reconnecting, but it still fails.",
+          "nodes_visited": [
+            "load_user_memory",
+            "agent",
+            "tools",
+            "agent",
+            "tools",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_user_memory",
+              "update": {
+                "user_preference": null,
+                "tool_rounds": 0,
+                "loop_limit_reached": false
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "save_user_preference",
+                        "args": {
+                          "language": "Kazakh"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"saved\": true, \"language\": \"Kazakh\", \"scope\": \"this user, all conversations\"}",
+                    "name": "save_user_preference",
+                    "tool_call_id": "call_fo2I3f7OEOFyoR0mwHTSJ2cF"
+                  }
+                ],
+                "tool_rounds": 1
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "find_instructions",
+                        "args": {
+                          "topic": "wifi"
+                        }
+                      },
+                      {
+                        "name": "check_service_status",
+                        "args": {
+                          "service": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "tools"
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": "{\"instruction_id\": \"GUIDE-WIFI\", \"title\": \"Connect to the practice campus network\", \"steps\": [\"Check that Wi-Fi is enabled and airplane mode is off.\", \"Select the fictional Campus-Demo network.\", \"If connection fails, forget the saved network and try connecting again.\", \"If the problem remains, check the service status before preparing a ticket.\"], \"source\": \"data/helpdesk.json\"}",
+                    "name": "find_instructions",
+                    "tool_call_id": "call_TpoaRAKTJfR16ZRcnVTxugO5"
+                  },
+                  {
+                    "type": "tool",
+                    "content": "{\"service\": \"wifi\", \"status\": \"operational\", \"message\": \"The demo Wi-Fi service has no reported outage.\", \"status_profile\": \"normal\", \"source\": \"data/service_status.json\"}",
+                    "name": "check_service_status",
+                    "tool_call_id": "call_6S1NAhojuIu2rLeOGG4SHxcj"
+                  }
+                ],
+                "tool_rounds": 2
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "Wi‑Fi қызметі қазір жұмыс істеп тұр. Мына нұсқауларды орындап көріңіз:\n\n1. Wi‑Fi қосулы және ұшақ режимі өшірулі екенін тексеріңіз.\n2. **Campus-Demo** желісін таңдаңыз.\n3. Қосылмаса, сақталған желіні ұмытып, қайта қосылып көріңіз.\n\nСіз Wi‑Fi-ды қосып, қайта қосылуға тырысқаныңызды айттыңыз. Мәселе шешілмесе, осы ақпарат негізінде билет жобасын дайындай аламын."
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "__end__"
+            }
+          ],
+          "model_tool_requests": [
+            {
+              "round": 1,
+              "name": "save_user_preference",
+              "args": {
+                "language": "Kazakh"
+              }
+            },
+            {
+              "round": 2,
+              "name": "find_instructions",
+              "args": {
+                "topic": "wifi"
+              }
+            },
+            {
+              "round": 2,
+              "name": "check_service_status",
+              "args": {
+                "service": "wifi"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "name": "save_user_preference",
+              "result": {
+                "saved": true,
+                "language": "Kazakh",
+                "scope": "this user, all conversations"
+              }
+            },
+            {
+              "name": "find_instructions",
+              "result": {
+                "instruction_id": "GUIDE-WIFI",
+                "title": "Connect to the practice campus network",
+                "steps": [
+                  "Check that Wi-Fi is enabled and airplane mode is off.",
+                  "Select the fictional Campus-Demo network.",
+                  "If connection fails, forget the saved network and try connecting again.",
+                  "If the problem remains, check the service status before preparing a ticket."
+                ],
+                "source": "data/helpdesk.json"
+              }
+            },
+            {
+              "name": "check_service_status",
+              "result": {
+                "service": "wifi",
+                "status": "operational",
+                "message": "The demo Wi-Fi service has no reported outage.",
+                "status_profile": "normal",
+                "source": "data/service_status.json"
+              }
+            }
+          ],
+          "memory_read": {
+            "conversation_messages_before_turn": 0,
+            "user_memory": null
+          },
+          "sources": [
+            "reference file: data/helpdesk.json",
+            "status snapshot: normal"
+          ],
+          "final_reply": "Wi‑Fi қызметі қазір жұмыс істеп тұр. Мына нұсқауларды орындап көріңіз:\n\n1. Wi‑Fi қосулы және ұшақ режимі өшірулі екенін тексеріңіз.\n2. **Campus-Demo** желісін таңдаңыз.\n3. Қосылмаса, сақталған желіні ұмытып, қайта қосылып көріңіз.\n\nСіз Wi‑Fi-ды қосып, қайта қосылуға тырысқаныңызды айттыңыз. Мәселе шешілмесе, осы ақпарат негізінде билет жобасын дайындай аламын.",
+          "ticket_file": null,
+          "tool_rounds": 2,
+          "loop_limit_reached": false
+        }
+      ]
+    },
+    {
+      "process_id": 1648,
+      "after_restart": true,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "restart-a",
+          "message": "Which problem and steps did we discuss?",
+          "nodes_visited": [
+            "load_user_memory",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_user_memory",
+              "update": {
+                "user_preference": {
+                  "language": "Kazakh"
+                },
+                "tool_rounds": 0,
+                "loop_limit_reached": false
+              },
+              "next_node_chosen_by_edge": "agent"
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "Біз Wi‑Fi мәселесін талқыладық: Wi‑Fi қосулы болса да, желіге қайта қосылу сәтсіз болған.\n\nТалқыланған қадамдар:\n- Wi‑Fi қосулы және ұшақ режимі өшірулі екенін тексеру.\n- **Campus-Demo** желісін таңдау.\n- Қосылмаса, сақталған желіні ұмытып, қайта қосылып көру.\n\nСіз нақты түрде Wi‑Fi-ды қосып, қайта қосылуға тырысқаныңызды айттыңыз."
+                  }
+                ]
+              },
+              "next_node_chosen_by_edge": "__end__"
+            }
+          ],
+          "model_tool_requests": [],
+          "tool_results": [],
+          "memory_read": {
+            "conversation_messages_before_turn": 7,
+            "user_memory": {
+              "language": "Kazakh"
+            }
+          },
+          "sources": [
+            "conversation memory",
+            "user memory"
+          ],
+          "final_reply": "Біз Wi‑Fi мәселесін талқыладық: Wi‑Fi қосулы болса да, желіге қайта қосылу сәтсіз болған.\n\nТалқыланған қадамдар:\n- Wi‑Fi қосулы және ұшақ режимі өшірулі екенін тексеру.\n- **Campus-Demo** желісін таңдау.\n- Қосылмаса, сақталған желіні ұмытып, қайта қосылып көру.\n\nСіз нақты түрде Wi‑Fi-ды қосып, қайта қосылуға тырысқаныңызды айттыңыз.",
+          "ticket_file": null,
+          "tool_rounds": 0,
+          "loop_limit_reached": false
+        }
+      ],
+      "preserve_local_storage": true
+    }
+  ],
+  "parent_process_id": 6856
+}
