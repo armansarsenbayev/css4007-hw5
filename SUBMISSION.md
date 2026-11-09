@@ -94,26 +94,23 @@ TODO(run): paste the generated diagram here.
 **Answers to the four questions**
 
 1. What information does each node need to read? What does it change?
-   TODO(you)
-   <!-- можно опираться на таблицу выше, но сформулируй сам -->
+   Read Request node reads information about state of the message and helpdesk json file. wifi_help note reads the instructions.wifi and helpdesk file. password_help reads instruction.password and also helpdesk. and finally, other_help needs also helpdesk.json file.
 2. What is the difference between a node returning an update to the state and a conditional edge choosing the next node?
-   TODO(you)
+   Node update a state of an object if its changed when called,e.g category: wifi it updates state "category", then conditional edge choose the next node for it and defines the route, e.g wifi: wifi_help
 3. Does the next node receive only the previous node's update, or the current graph state?
-   TODO(you)
-   <!-- пример с "The WIFI is very slow today" из гайда, раздел 2 -->
+   Next node receive the current graph state, previous node returns its current update to the langgraph. after that it puts its state to global "memory" which other nodes can use.
+   
 4. What do `START`, `END`, and compiling a graph mean in this program?
-   TODO(you)
+   START is the virtual entry that delivers user input into the graph, in our program it read the message and defines its category. End is last edge, it means when program should stop in our case when reply is sent. Compiling is checking if the whole program is working correctly. For example, if all nodes and edges connected from start to end. 
 
 ### Predictions before running
 
-TODO(you): fill the "Predicted route" column and commit it before running any code (commit `Part 1: route predictions written before running the graph`). The commit time is my evidence.
-
 | Message | Predicted route | Actual route | What I learned |
 | --- | --- | --- | --- |
-| I cannot connect to Wi-Fi. | wifi_help | TODO(run) | TODO(you) |
-| I forgot my PASSWORD. | password_help | TODO(run) | TODO(you) |
-| My laptop screen is broken. | other_help | TODO(run) | TODO(you) |
-| My Wi-Fi password does not work. | wifi_help | TODO(run) | TODO(you) |
+| I cannot connect to Wi-Fi. | START → read_request → wifi_help → END | TODO(run) | TODO(you) |
+| I forgot my PASSWORD. | START → read_request → password_help → END | TODO(run) | TODO(you) |
+| My laptop screen is broken. | START → read_request → other_help → END | TODO(run) | TODO(you) |
+| My Wi-Fi password does not work. | START → read_request → wifi_help → END | TODO(run) | TODO(you) |
 
 Command for each run (example):
 
