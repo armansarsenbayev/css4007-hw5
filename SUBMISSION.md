@@ -123,16 +123,16 @@ It matches the planned graph: one fixed edge into `read_request`, three conditio
    Next node receive the current graph state, previous node returns its current update to the langgraph. after that it puts its state to global "memory" which other nodes can use.
    
 4. What do `START`, `END`, and compiling a graph mean in this program?
-   START is the virtual entry that delivers user input into the graph, in our program it read the message and defines its category. End is last edge, it means when program should stop in our case when reply is sent. Compiling is checking if the whole program is working correctly. For example, if all nodes and edges connected from start to end. 
+   START is the virtual entry that delivers user input into the graph, in our program it give the message to a first node. End is last exit, iwhen program should stop in our case when reply is sent by help function. Invoke check the final state. Compiling is checking if the langgrapg is working correctly. For example, if all nodes and edges connected from start to end and all edge has existing node.
 
 ### Predictions before running
 
 | Message | Predicted route | Actual route | What I learned |
 | --- | --- | --- | --- |
-| I cannot connect to Wi-Fi. | START → read_request → wifi_help → END | START → read_request (`category: wifi`) → wifi_help → END (S01) | TODO(you) |
-| I forgot my PASSWORD. | START → read_request → password_help → END | START → read_request (`category: password`) → password_help → END (S02) | TODO(you) |
-| My laptop screen is broken. | START → read_request → other_help → END | START → read_request (`category: other`) → other_help → END (S03) | TODO(you) |
-| My Wi-Fi password does not work. | START → read_request → wifi_help → END | START → read_request (`category: wifi`) → wifi_help → END (S04) | TODO(you) |
+| I cannot connect to Wi-Fi. | START → read_request → wifi_help → END | START → read_request (`category: wifi`) → wifi_help → END (S01) | same |
+| I forgot my PASSWORD. | START → read_request → password_help → END | START → read_request (`category: password`) → password_help → END (S02) | same |
+| My laptop screen is broken. | START → read_request → other_help → END | START → read_request (`category: other`) → other_help → END (S03) | same |
+| My Wi-Fi password does not work. | START → read_request → wifi_help → END | START → read_request (`category: wifi`) → wifi_help → END (S04) | same |
 
 Command for each run (example):
 
@@ -144,7 +144,7 @@ Each run saves the order of nodes and the full state after every node (`stream_m
 
 Message with both topics in the original graph:
 
-TODO(you): explain what happened with "My Wi-Fi password does not work." and which rule caused it.
+It goes to wifi_help because it goes first in code.
 
 ### My change to the graph
 
@@ -204,13 +204,11 @@ Same message, both logs:
 | state after 2 | `message`, `category: wifi`, `reply` | `message`, `category: both`, `reply` |
 | then | END | END |
 
-What changed: TODO(you)
-<!-- главное: изменился маршрут в графе (новый узел и новое значение category), а не только текст ответа -->
+What changed: Added a new node and new category both which help to determine the exact problem
 
 **What LangGraph controls and what my functions decide**
 
-TODO(you)
-<!-- LangGraph: порядок вызова узлов, слияние обновлений в state, вызов функции ребра и переход. Твои функции: категория, выбор дороги, текст ответа. Модели здесь нет. -->
+LangGraph decides the sequence of nodes and state merging, also call of edges. My function decides the category, trace and reply
 
 ---
 
