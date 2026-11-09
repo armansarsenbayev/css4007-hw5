@@ -11,7 +11,7 @@ TODO(pin)  : точные версии и команды, уточним, ког
 
 | | |
 | --- | --- |
-| Student | TODO(you): name |
+| Student | Arman Sarsenbayev |
 | Student ID | s23069008 |
 | Group | CSS4007-ENG-8 |
 | Repository | https://github.com/armansarsenbayev/css4007-hw5 |
