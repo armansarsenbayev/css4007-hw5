@@ -310,13 +310,13 @@ State for Parts 2 and 3:
 **Answers to the four questions**
 
 1. How does the graph decide between running a tool and ending with an answer?
-   TODO(you)
+   After every `agent` node the conditional edge `route_after_agent` looks at the last message in `messages`. If the model's `AIMessage` contains `tool_calls` and `tool_rounds` is below `MAX_TOOL_ROUNDS` (4), it returns `"tools"`. If there are tool calls but the limit is reached, it returns `"loop_limit"`. If there are no tool calls, the message is a final answer and it returns `END`. So the model influences the route only through what it writes in its message; the decision itself is my Python function.
 2. Which component requests a tool, and which component actually executes it?
-   TODO(you)
+   The model requests it: in the `agent` node it returns an `AIMessage` with a tool name and arguments (for example `check_service_status {"service": "wifi"}`). It cannot run anything itself. My own `tools` node executes it: it checks the tool name and arguments, adds the values the application controls (`status_profile`, `user_id`, `thread_id`, the store) from the run context, calls the Python function and wraps the result in a `ToolMessage`. Unknown tools or bad arguments become an error message instead of a crash.
 3. What changes in the state after a tool result returns?
-   TODO(you)
+   The `tools` node returns `{"messages": [ToolMessage...], "tool_rounds": tool_rounds + 1}`. Because `messages` uses the `add_messages` reducer, the `ToolMessage` (JSON result plus the matching `tool_call_id`) is appended to the conversation, not replacing it, and the round counter grows by one. Then the edge goes back to `agent`, so the model sees its own request and the result and decides the next step. In S06 the state after round 1 held the `operational` status, and only then did the model ask for `prepare_ticket`. A ticket file on disk or a saved preference in the store are side effects outside the graph state.
 4. What makes this part different from the fixed routing rules in Part 1?
-   TODO(you)
+   In Part 1 the route is fully decided by my `if` rules on the message text: the same message always gives the same path, and the graph is a straight line with no loop. In Part 2 the model reads the conversation and decides which tool to call, with which arguments, and when to stop. The path can loop through `tools` several times and depends on tool results: the same request created a ticket with `normal` (S06) but not with `wifi_outage` (S07) or `status_unavailable` (S08). What stays fixed is the frame around the model: the graph structure, the loop limit, the tool rules and the application values that the model cannot change.
 
 ### A real run with several tools
 
@@ -343,7 +343,7 @@ The steps in the ticket are exactly the two the user named; no guide steps were 
 | `wifi_outage` | S07 | `outage` | No `prepare_ticket` call. "Wi-Fi is currently experiencing a campus-wide outage, so I did not prepare a ticket. No repair time is available." | none (none expected) |
 | `status_unavailable` | S08 | `unknown` | No `prepare_ticket` call. "Wi-Fi status could not be determined ... so I did not prepare a ticket. Would you like a ticket draft noting that the status could not be checked?" | none (none expected) |
 
-TODO(you): one or two sentences on why the behaviour changed with the data.
+The code, the prompt and the user's message were the same in all three runs; only the `--status` snapshot chosen by the application changed, so `check_service_status` returned `operational`, `outage` or `unknown`. That result went back to the model as a `ToolMessage`, and the model applied the user's condition ("if it is operating, prepare a ticket") to it: it called `prepare_ticket` only for `operational`, refused for `outage`, and for `unknown` asked instead of guessing.
 
 ---
 
