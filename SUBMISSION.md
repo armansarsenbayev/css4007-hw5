@@ -110,10 +110,10 @@ TODO(you): fill the "Predicted route" column and commit it before running any co
 
 | Message | Predicted route | Actual route | What I learned |
 | --- | --- | --- | --- |
-| I cannot connect to Wi-Fi. | TODO(you) | TODO(run) | TODO(you) |
-| I forgot my PASSWORD. | TODO(you) | TODO(run) | TODO(you) |
-| My laptop screen is broken. | TODO(you) | TODO(run) | TODO(you) |
-| My Wi-Fi password does not work. | TODO(you) | TODO(run) | TODO(you) |
+| I cannot connect to Wi-Fi. | wifi_help | TODO(run) | TODO(you) |
+| I forgot my PASSWORD. | password_help | TODO(run) | TODO(you) |
+| My laptop screen is broken. | other_help | TODO(run) | TODO(you) |
+| My Wi-Fi password does not work. | wifi_help | TODO(run) | TODO(you) |
 
 Command for each run (example):
 
