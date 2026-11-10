@@ -1,14 +1,5 @@
 # HW5: My LangGraph helpdesk
 
-<!--
-МЕТКИ В ЭТОМ ФАЙЛЕ
-TODO(you)  : пишешь ты сам, своими словами (прогнозы, ответы на вопросы, выводы)
-TODO(run)  : заполняется после реального запуска, из наших логов
-TODO(pin)  : точные версии и команды, уточним, когда код запустится
-Перед сдачей: поиск по "TODO" должен ничего не находить.
-Подсказки в таких комментариях на GitHub не видны, но перед сдачей их лучше удалить.
--->
-
 | | |
 | --- | --- |
 | Student | Arman Sarsenbayev |
@@ -21,9 +12,7 @@ TODO(pin)  : точные версии и команды, уточним, ког
 
 ### Use of AI
 
-TODO(you): check and edit this paragraph so it is true.
-
-I used Claude (Anthropic) as an assistant. It drew the planned graph diagrams, wrote most of the Python code, the tests and the GitHub Actions workflow, and ran the scenario scripts. I wrote the route predictions before any code was run, answered the state and routing questions in my own words, ran the program on my own computer, compared predictions with the traces and wrote the conclusions. I reviewed every file before committing it.
+I used Claude (Anthropic) as an assistant. It drew the planned graph diagrams, wrote most of the Python code, the tests and the GitHub Actions workflow, ran the scenario scripts and filled the result tables from the logs. It also drafted the answers to the Part 2 and Part 3 questions and the scenario comparisons, which I read and checked against the logs. I wrote the route predictions before any code was run, answered the Part 1 questions in my own words, compared my predictions with the traces, and reviewed every file before committing it.
 
 ### Repository layout
 
@@ -376,8 +365,9 @@ The user id and thread id are given on the command line by the person running th
 
 **thread_id versus user_id, retrieval versus memory**
 
-TODO(you)
-<!-- thread_id: один разговор; user_id: человек, у которого может быть много разговоров. Инструкции по Wi-Fi одинаковые для всех и лежат в справочнике (retrieval), язык это факт о конкретном пользователе, который он сам сообщил (memory). -->
+A `thread_id` identifies one conversation. The checkpointer saves the state (all messages, the current problem, the steps already tried) under it, so running the graph again with the same `thread_id` continues that conversation, and a new `thread_id` starts with an empty history. A `user_id` identifies the person, who can have many threads. User memory is stored under `("users", user_id)`, so a preference saved in one thread is loaded in every other thread of the same user (S12) but never for another user (S13). Both ids come from the command line, not from the model.
+
+Looking up Wi-Fi instructions is **retrieval**: `find_instructions` reads a shared reference file (`data/helpdesk.json`) that is the same for every user, was written in advance and is not changed by the conversation. Recalling the reply language is **memory**: it is a fact about one particular user that the user told the assistant, that the program saved during a conversation (`save_user_preference`) and that it reads back later (`load_user_memory`). Retrieval answers "what does the helpdesk know?", memory answers "what do I know about this user?".
 
 ### Demonstrations
 
@@ -466,6 +456,6 @@ Logs are in `outputs/`, one file per scenario. Run any scenario with `python -m 
 | S13: Do not share memory between users | `python -m helpdesk.scenarios S13` | `outputs/S13.json` | `demo-user-a` saved Kazakh; `demo-user-b` loaded no preference and 0 messages, replied in English that nothing has been recorded. No change. |
 | S14: Password recovery outage | `python -m helpdesk.scenarios S14` | `outputs/S14.json` | `check_service_status(account_recovery)` → outage. Reply confirmed the known problem and said no repair time is available. No ticket. No change. |
 
-**S04 versus S05:** TODO(you)
+**S04 versus S05:** Same message, "My Wi-Fi password does not work.", different graph. In the original graph (S04) `read_request` checks the Wi-Fi rule first, so it sets `category: wifi` and the edge goes to `wifi_help`; the password part of the message is silently ignored. In the changed graph (S05) a new rule is checked before the others: both a Wi-Fi alias and a password alias are present, so `read_request` sets `category: both` and `route_by_category` sends the state to the new `clarify_problem` node, which asks which problem to solve. The difference is in the route (new category value, new node, new branch of the conditional edge), not just in the reply text.
 
-**S06 versus S07 versus S08:** TODO(you)
+**S06 versus S07 versus S08:** Same conditional request ("check whether Wi-Fi is down; if it is operating, prepare a ticket"), same code and prompt, only the status snapshot differs. `check_service_status` returned `operational` in S06, so the model called `prepare_ticket` and a draft was saved; `outage` in S07, so it did not prepare a ticket and said no repair time is known; `unknown` in S08, so it did not treat that as working or as an outage, did not prepare a ticket and asked whether to draft one noting that the status could not be checked. The tool result in the state decided the next action.
